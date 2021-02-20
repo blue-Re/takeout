@@ -8,6 +8,10 @@ const Order = () => import('../pages/Order/Order.vue')
 const Profile = () => import('../pages/Profile/Profile.vue')
 const Search = () => import('../pages/Search/Search.vue')
 const Login = () => import('../pages/Login/Login.vue')
+const Shop = ()=> import('../pages/Shop/Shop.vue')
+const ShopGoods = ()=> import('../pages/Shop/ShopGoods/ShopGoods.vue')
+const ShopInfo = ()=> import('../pages/Shop/ShopInfo/ShopInfo.vue')
+const ShopRatings = ()=> import('../pages/Shop/ShopRatings/ShopRatings.vue')
 
 // 1.声明使用路由
 Vue.use(VueRouter)
@@ -52,6 +56,28 @@ const router = new VueRouter({
       path: '/login',
       component: Login
     },
+    {
+      path:'/shop',
+      component:Shop,
+      children:[
+        {
+          path:'/shop/goods',
+          component:ShopGoods
+        },
+        {
+          path:'/shop/info',
+          component:ShopInfo
+        },
+        {
+          path:'/shop/ratings',
+          component:ShopRatings
+        },
+        {
+          path:'',
+          redirect:'/shop/goods'
+        }
+      ]
+    }
   ],
   mode: 'history'
 })

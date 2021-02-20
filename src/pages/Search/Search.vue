@@ -7,19 +7,79 @@
         name="search"
         placeholder="请输入商家或美食名称"
         class="search_input"
+        v-model="keyword"
+        @click.prevent="search"
       />
       <input type="submit" name="submit" class="search_submit" />
     </form>
+    <section class="list" v-if="!noSearchShops">
+      <ul class="list_container">
+        <!--:to="'/shop?id='+item.id"-->
+        <router-link
+          :to="{ path: '/shop', query: { id: item.id } }"
+          tag="li"
+          v-for="item in searchShops"
+          :key="item.id"
+          class="list_li"
+        >
+          <section class="item_left">
+            <img :src="imgBaseUrl + item.image_path" class="restaurant_img" />
+          </section>
+          <section class="item_right">
+            <div class="item_right_text">
+              <p>
+                <span>{{ item.name }}</span>
+              </p>
+              <p>月售 {{ item.month_sales || item.recent_order_num }} 单</p>
+              <p>
+                {{ item.delivery_fee || item.float_minimum_order_amount }} 元起送 / 距离{{
+                  item.distance
+                }}
+              </p>
+            </div>
+          </section>
+        </router-link>
+      </ul>
+    </section>
+    <div class="search_none" v-else>很抱歉，没有搜索结果</div>
   </section>
 </template>
 
 <script>
-import HeaderTop from '../../components/HeaderTop/HeaderTop'
-
+import HeaderTop from "../../components/HeaderTop/HeaderTop";
+import { mapState } from "vuex";
 export default {
   name: "Search.vue",
-  components:{
-    HeaderTop
+  components: {
+    HeaderTop,
+  },
+  data() {
+    return {
+      keyword: "",
+      imgBaseUrl:'http:candu.org:8001/img/',
+      noSearchShops:false
+    };
+  },
+  methods: {
+    search() {
+      // 得到搜索关键字
+      const keyword = this.keyword.trim();
+      // 进行搜索
+      if (keyword) {
+        this.noSearchShops =
+        this.$store.dispatch("searchShops", keyword);
+      }
+    },
+  },
+  computed: {
+    ...mapState(["searchShops"]),
+  },
+  watch:{
+    searchShops(value){
+      if(!value.length){
+        this.noSearchShops = true
+      }
+    }
   }
 };
 </script>
@@ -67,7 +127,7 @@ export default {
             transform translateY(-50%)
             .header_login_text
               color #fff
-              
+
         .search_form
             clearFix()
             margin-top 45px
